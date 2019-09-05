@@ -18,13 +18,9 @@ SELECT u.*,r.*
 FROM users AS u
 RIGHT JOIN roles AS r 
 ON u.role_id=r.id;
--- 3) Although not explicitly covered in the lesson,aggregate functions like count can be used with join queries. USe count and the appropriate join type to get list of roles
--- along with the number of users that role has. Hint: You will alos need to use group by in the query.
-SELECT r.name,count(*)
-FROM roles AS r
-LEFT JOIN users AS u
-ON u.role_id=r.id
-GROUP BY r.name;
+-- 3) Although not explicitly covered in the lesson,aggregate functions like count can be used with join queries. Use count and the appropriate join type to get list of roles
+-- along with the number of users that role has. Hint: You will also need to use group by in the query.
+ 
 -- 1) Use the employees database.
 USE employees;
 -- 2) Using the example in the Associative Table Joins section as a guide, write a query that shows each department along with the name of the current manager for that department.
@@ -42,7 +38,7 @@ JOIN employees AS e ON (dm.emp_no=e.emp_no)
 WHERE dm.to_date='9999-01-01' AND e.gender='F'
 ORDER BY d.dept_name ASC;
 -- 4) Find the current titles of employees currently working in the Customer Service department.
-SELECT t.title AS Title,COUNT(*) AS Count
+SELECT t.title AS Title
 FROM departments as d
 JOIN dept_emp AS de ON d.dept_no=de.dept_no
 JOIN titles AS t ON de.emp_no=t.emp_no
@@ -108,8 +104,7 @@ SELECT
  e.first_name,
  e.last_name,
  d.dept_name,
- s.salary,
--- ROW_NUMBER() OVER (PARTITION BY d.dept_name ORDER BY s.salary DESC) AS row_num
+ s.salary
 FROM employees AS e
 JOIN dept_emp AS de ON (e.emp_no=de.emp_no)
 JOIN departments AS d ON(d.dept_no=de.dept_no)
