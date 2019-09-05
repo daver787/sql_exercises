@@ -11,5 +11,12 @@ ORDER BY birth_date ASC, hire_date DESC;
 SELECT MIN(salary) AS minimum_salry,MAX(salary) AS maximum_salary FROM salaries;
 -- 6) Use your knowledge of built in SQL functions to generate a username for all of the employees. A username should be all lowercase,and consist of the first character of the 
 --  employees first name,the first 4 characters of the employees last name, an underscore,the month the employee was born, and the last two digits of the year they were born.AS
-SELECT LOWER(CONCAT(SUBSTR(first_name,1,1),SUBSTR(last_name,1,4),'_',SUBSTR(birth_date,6,2),SUBSTR(birth_date,3,2))) AS username,first_name,last_name,birth_date FROM employees;
+SELECT LOWER(CONCAT(SUBSTR(first_name,1,1),
+SUBSTR(last_name,1,4),'_',
+SUBSTR(birth_date,6,2),
+SUBSTR(birth_date,3,2))) AS username,
+first_name,
+last_name,
+birth_date 
+FROM employees;
 
