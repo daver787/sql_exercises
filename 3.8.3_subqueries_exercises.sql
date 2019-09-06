@@ -7,6 +7,7 @@ WHERE hire_date IN (
 SELECT hire_date
 FROM employees 
 WHERE emp_no='101010');
+
 -- 2) Find all the titles held by all employees with the first name Aamod.
 -- done with a join instead of a sub-query
 SELECT e.first_name,t.title
@@ -14,13 +15,14 @@ FROM titles AS t
 JOIN employees AS e ON (t.emp_no=e.emp_no)
 WHERE e.first_name='Aamod';
 
-SELECT title,COUNT(*)
+SELECT COUNT(*),SUM(a.title_count) FROM
+(SELECT title,COUNT(*) as title_count
 FROM titles
 WHERE emp_no IN (
 SELECT emp_no
 FROM employees
 WHERE first_name='Aamod') 
-GROUP BY title;
+GROUP BY title)AS a;
 
 -- 3) How many people in the employees table are no longer workng for the company?
 SELECT COUNT(*)
@@ -28,7 +30,8 @@ FROM employees
 WHERE emp_no IN(
 SELECT emp_no 
 FROM dept_emp
-WHERE to_date<NOW());
+GROUP BY emp_no
+HAVING max(to_date)<NOW());
 
 -- 4) Find all the current department managers that are female.
 SELECT first_name,last_name

@@ -1,4 +1,4 @@
--- Create a file named 3.9_temporary_tables.sql to do your work for this exercise.
+ -- Create a file named 3.9_temporary_tables.sql to do your work for this exercise.
 -- 1) Using the example from the lesson, re-create the employeees_with_departments table.
 USE employees;
 CREATE TEMPORARY TABLE employees_with_departments AS
@@ -71,7 +71,7 @@ JOIN dept_emp AS de ON (d.dept_no=de.dept_no)
 JOIN employees AS e ON (de.emp_no=e.emp_no)
 JOIN salaries AS s ON (e.emp_no=s.emp_no)
 WHERE de.to_date='9999-01-01' AND s.to_date='9999-01-01'
-GROUP BY d.dept_name) AS a ON (a.dept_name=d.dept_name)
+GROUP BY d.dept_name) AS a ON (a.dept_name=d.dept_name);
 
 SELECT dept_name,AVG(salary_z_score)
 FROM z_scores
