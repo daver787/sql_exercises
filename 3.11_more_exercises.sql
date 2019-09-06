@@ -116,5 +116,13 @@ GROUP BY staff_id;
  GROUP BY f.title;
  
  -- 12)How many copies of the film Hunchback Impossible exist in the inventory system?
+ SELECT 
+ title,
+ COUNT(f.film_id) AS copies
+ FROM inventory AS i
+ JOIN film AS f ON (i.film_id=f.film_id)
+ WHERE f.title='Hunchback Impossible'
+ GROUP BY title;
+
  
  
