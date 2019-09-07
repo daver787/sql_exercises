@@ -159,9 +159,38 @@ WHERE country='Canada';
 -- 16)Sales have been lagging among young families,
  -- and you wish to target all family movies for a promotion.
  -- Identify all movies categorized as famiy films.
-
 SELECT title
 FROM film
 LEFT JOIN film_category ON (film.film_id=film_category.film_id)
 LEFT JOIN category ON (film_category.category_id=category.category_id)
 WHERE category.name='Family';
+
+-- 17)Write a query to display how much business, in dollars, each store brought in.
+SELECT SUM(payment.amount)AS store_revenue,staff.store_id
+FROM payment
+LEFT JOIN staff ON (payment.staff_id=staff.staff_id)
+GROUP BY staff.store_id;
+
+-- 18) Write a query to display for each store its store ID, city, and country.
+SELECT
+store.store_id,
+city.city,
+country.country
+FROM store
+LEFT JOIN address ON (store.address_id=address.address_id)
+LEFT JOIN city ON (address.city_id=city.city_id)
+LEFT JOIN country ON (city.country_id=country.country_id);
+
+-- 19)List the top five genres in gross revenue in descending order.
+-- (Hint: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
+SELECT 
+category.name AS genre,
+SUM(payment.amount) AS gross_revenue
+FROM payment
+LEFT JOIN rental ON (payment.rental_id=rental.rental_id)
+LEFT JOIN inventory ON (rental.inventory_id=inventory.inventory_id)
+LEFT JOIN film_category ON (inventory.film_id=film_category.film_id)
+LEFT JOIN category ON (film_category.category_id=category.category_id)
+GROUP BY category.name
+ORDER BY gross_revenue DESC
+LIMIT 5;
