@@ -123,6 +123,45 @@ GROUP BY staff_id;
  JOIN film AS f ON (i.film_id=f.film_id)
  WHERE f.title='Hunchback Impossible'
  GROUP BY title;
+ 
+ -- 13)The music of Queen and Kris Kristofferson have seen an unlikely resurgence.
+ -- As an unintended consequence, films starting with the letters K and Q have also soared in popularity. 
+ -- Use subqueries to display the titles of movies starting with the letters K and Q whose language is English.
+ SELECT title
+ FROM film
+ WHERE (title LIKE '%q%' OR title LIKE '%k%')
+ AND language_id IN (SELECT language_id FROM language WHERE name='English');
+ 
 
+ -- 14)Use subqueries to display all actors who appear in the film Alone Trip.
+ SELECT first_name,last_name
+ FROM actor
+ WHERE actor_id IN(
+ SELECT actor_id
+ FROM film
+ LEFT JOIN
+ film_actor ON (film.film_id=film_actor.film_id)
+ WHERE film.title='Alone Trip');
  
  
+-- 15)You want to run an email marketing campaign in Canada,
+-- for which you will need the names and email addresses of all Canadian customers.
+SELECT
+first_name,
+last_name,
+email
+FROM customer
+LEFT JOIN address ON (customer.address_id=address.address_id)
+LEFT JOIN city ON (address.city_id=city.city_id)
+LEFT JOIN country ON (city.country_id=country.country_id)
+WHERE country='Canada';
+
+-- 16)Sales have been lagging among young families,
+ -- and you wish to target all family movies for a promotion.
+ -- Identify all movies categorized as famiy films.
+
+SELECT title
+FROM film
+LEFT JOIN film_category ON (film.film_id=film_category.film_id)
+LEFT JOIN category ON (film_category.category_id=category.category_id)
+WHERE category.name='Family';
