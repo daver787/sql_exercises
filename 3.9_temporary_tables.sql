@@ -31,7 +31,7 @@ SET amount_int=amount*100;
 
 ALTER TABLE payment_revamp
 DROP COLUMN amount;
--- Find out how the average pay in each department compares to the overall average pay. In order to make the comparison easier,you should use the Z-score for salaries.
+-- 3)Find out how the average pay in each department compares to the overall average pay. In order to make the comparison easier,you should use the Z-score for salaries.
 -- In terms of salary, what is the best department to work for? THe worst?
 -- first method using subquery
 USE employees;
@@ -56,6 +56,7 @@ GROUP BY a.dept_name;
 
 -- second method using temporary tables
 -- DROP TABLE z_scores
+
 CREATE TEMPORARY TABLE z_scores AS
 SELECT d.dept_name,
 (s.salary-a.average_salary)/(a.salary_stdev) AS salary_z_score
@@ -79,7 +80,8 @@ GROUP BY dept_name;
 
 
 
-
+-- 4)What is the average salary for an employee based on the number of years they have been with the company? Express your answer in terms of the Z-score of salary.
+-- Since this data is a little older, scale the years of experience by subtracting the minumum from every row.
 
 
 
