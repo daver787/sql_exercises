@@ -472,3 +472,104 @@ FROM film
 GROUP BY rating;
  
 -- 2) How many different films of each genre are in the database? 
+SELECT
+COUNT(category.category_id),
+category.name
+FROM film_category
+LEFT JOIN category ON (film_category.category_id=category.category_id)
+GROUP BY category.name;
+
+-- 3)What are the 5 most frequently rented films?
+SELECT
+COUNT(film.title) AS film_count,
+film.title
+FROM payment
+LEFT JOIN rental ON (payment.rental_id=rental.rental_id)
+LEFT JOIN inventory ON (rental.inventory_id=inventory.inventory_id)
+LEFT JOIN film ON (inventory.film_id=film.film_id)
+GROUP BY film.title
+ORDER BY film_count DESC
+LIMIT 10;
+
+-- 4)What are the most most profitable films (in terms of gross revenue)?
+-- Note that might need to be modified to include multiple checkout periods for one rental
+SELECT
+film.title, 
+a.rental_count*film.rental_rate AS gross_revenue
+FROM film
+INNER JOIN
+(SELECT
+COUNT(film.title) AS rental_count,
+film.title
+FROM payment
+LEFT JOIN rental ON (payment.rental_id=rental.rental_id)
+LEFT JOIN inventory ON (rental.inventory_id=inventory.inventory_id)
+LEFT JOIN film ON (inventory.film_id=film.film_id)
+GROUP BY film.title
+ORDER BY rental_count DESC) AS a ON (film.title=a.title)
+ORDER BY gross_revenue DESC;
+
+SELECT
+film.title,
+SUM(amount) AS gross_revenue
+FROM payment
+LEFT JOIN rental ON (payment.rental_id=rental.rental_id)
+LEFT JOIN inventory ON (rental.inventory_id=inventory.inventory_id)
+LEFT JOIN film ON (inventory.film_id=film.film_id)
+GROUP BY film.title
+ORDER BY gross_revenue DESC;
+
+
+-- 5)Who is the best customer?
+SELECT 
+customer.first_name,
+customer.last_name,
+a.total_spend
+FROM customer
+LEFT JOIN(
+SELECT 
+payment.customer_id,
+SUM(payment.amount) AS total_spend
+FROM payment
+LEFT JOIN customer ON (payment.customer_id=customer.customer_id)
+GROUP BY 1) AS a ON(customer.customer_id=a.customer_id)
+ORDER BY a.total_spend DESC
+LIMIT 1;
+
+-- 6)Who are the most popular actors (that have appeared in the most films)?
+SELECT 
+actor.first_name AS first_name,
+actor.last_name AS last_name,
+a.film_count
+FROM actor
+LEFT JOIN(
+SELECT
+COUNT(film_id) AS film_count,
+actor_id
+FROM film_actor
+GROUP BY actor_id)AS a ON (actor.actor_id=a.actor_id)
+ORDER BY film_count DESC;
+
+-- 7)What are the sales for each store for each month in 2005?
+SELECT 
+CONCAT(YEAR(payment_date),"-",MONTH(payment_date)) AS date,
+staff.store_id,
+SUM(amount) AS sales
+FROM payment
+LEFT JOIN staff ON (payment.staff_id=staff.staff_id)
+WHERE year(payment_date)=2005
+GROUP BY date,staff.store_id;
+
+-- Bonus: Find the film title, customer name, customer phone number,
+-- and customer address for all the outstanding DVDs.
+
+SELECT 
+film.title,
+CONCAT(customer.last_name, " ,",customer.first_name) AS customer_name,
+address.phone
+FROM rental
+LEFT JOIN customer ON (rental.customer_id=customer.customer_id)
+LEFT JOIN address ON (customer.address_id=address.address_id)
+LEFT JOIN inventory ON (rental.inventory_id=inventory.inventory_id)
+LEFT JOIN film ON (inventory.film_id=film.film_id)
+WHERE rental.return_date IS NULL;
