@@ -35,31 +35,32 @@ DROP COLUMN amount;
 -- In terms of salary, what is the best department to work for? THe worst?
 -- first method using subquery
 USE employees;
-SELECT a.dept_name,AVG(a.salary_z_score)
+SELECT b.dept_name,
+AVG(b.salary_z_score)
 FROM(
 SELECT d.dept_name,
-(s.salary-a.average_salary)/(a.salary_stdev) AS salary_z_score
+((SELECT AVG(salary) FROM salaries)-a.average_salary)/(SELECT STDDEV(salary) from salaries) AS salary_z_score
 FROM dept_emp AS de
 JOIN departments AS d ON (de.dept_no=d.dept_no) AND de.to_date='9999-01-01'
 JOIN salaries as s ON (de.emp_no=s.emp_no) AND s.to_date='9999-01-01'
 JOIN (
 SELECT d.dept_name, 
-AVG(s.salary) AS average_salary,
-STDDEV(s.salary) AS salary_stdev
+AVG(s.salary) AS average_salary
 FROM departments as d
 JOIN dept_emp AS de ON (d.dept_no=de.dept_no)
 JOIN employees AS e ON (de.emp_no=e.emp_no)
 JOIN salaries AS s ON (e.emp_no=s.emp_no)
 WHERE de.to_date='9999-01-01' AND s.to_date='9999-01-01'
-GROUP BY d.dept_name) AS a ON (a.dept_name=d.dept_name)) AS a
-GROUP BY a.dept_name;
+GROUP BY d.dept_name) AS a ON (a.dept_name=d.dept_name)) AS b
+GROUP BY b.dept_name
+ORDER BY b.dept_name;
 
 -- second method using temporary tables
 -- DROP TABLE z_scores
-
+USE employees;
 CREATE TEMPORARY TABLE z_scores AS
 SELECT d.dept_name,
-(s.salary-a.average_salary)/(a.salary_stdev) AS salary_z_score
+((SELECT AVG(salary) FROM salaries)-a.average_salary_dept)/(SELECT STDDEV(salary) FROM salaries) AS salary_z_score
 FROM dept_emp AS de
 JOIN departments AS d ON (de.dept_no=d.dept_no) -- AND de.to_date='9999-01-01'
 JOIN salaries as s ON (de.emp_no=s.emp_no) -- AND s.to_date='9999-01-01'
